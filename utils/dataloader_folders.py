@@ -93,9 +93,11 @@ def getTrainData(csv_file,batch_size=64):
 											transforms.Resize(224),
 											transforms.CenterCrop(224),
 											transforms.RandomHorizontalFlip(),
-											transforms.RandomRotation(10),
+											transforms.RandomRotation(20),
+											transforms.ColorJitter(0.2,0.2,0.2,0.2),
 											transforms.ToTensor(),
-											transforms.Normalize(stats['mean'],stats['std'])
+											transforms.Normalize(stats['mean'],stats['std']),
+											transforms.RandomErasing(p=0.5, scale=(0.02, 0.33), ratio=(0.2, 2.0), value=0, inplace=False)
 										]))
 
 	dataloader_training = DataLoader(transformed_training, batch_size,
