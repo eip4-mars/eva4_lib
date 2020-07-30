@@ -4,7 +4,6 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import OneCycleLR
 import matplotlib.pyplot as plt
-#%matplotlib inline
 import numpy as np
 import torchvision
 import torchsummary
@@ -15,7 +14,7 @@ import torch
 from tqdm import tqdm
 
 
-def train(model, device, train_loader, optimizer, epoch):
+def train(model, device, train_loader, optimizer):
 	train_losses = []
 	train_acc = []
 
@@ -41,12 +40,9 @@ def train(model, device, train_loader, optimizer, epoch):
 		
 		loss  = criterion(y_pred, target)
 		
-
 		train_losses.append(loss)
 
-	   
-
-		 #Backpropagation
+		#Backpropagation
 		loss.backward()
 		optimizer.step()
 
@@ -90,18 +86,29 @@ def test(model, device, test_loader):
 	test_acc_l1.append(100. * correct / processed)
 	return test_acc_l1[-1]
 
-def fit(model, device, train_loader, test_loader, optimizer, scheduler, num_epoch):
-	
-	for epoch in range(1,num_epoch+1):
+def fit(model, device, train_loader, test_loader, optimizer, scheduler, start_epoch, num_epoch, plot_acc = False):
+	train_acc = []
+	test_acc = []
+	for epoch in range(start_epoch, start_epoch+num_epoch+1):
 		curr_lr=optimizer.param_groups[0]['lr']
 		print(f'Epoch: {epoch} Learning_Rate {curr_lr}')
-		train_acc1 = train(model, device, train_loader, optimizer, epoch)
+		train_acc1 = train(model, device, train_loader, optimizer)
 		test_acc1 = test(model, device, test_loader)
 		#print('Test accuracy:', test_acc1)
+		train_acc.append(train_acc1)
+		test_acc.append(test_acc1)
 		if "ReduceLROnPlateau" in  str(type(scheduler)):
 			scheduler.step(test_acc1)
 		elif "OneCycleLR" in  str(type(scheduler)):
 			scheduler.step()
+	
+	if plot_acc:
+		plt.plot(range(1,7), train_acc, label= 'Train Accuracy')
+		plt.plot(range(1,7), test_acc, label= 'Test Accuracy')
+		plt.legend()
+		plt.xlabel("Epoch")
+		plt.ylabel("Accuracy")
+		plt.title("Epoch wise train and test accuracies")
 	
 	
 def predict(model, device, test_loader):
