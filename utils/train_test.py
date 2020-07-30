@@ -86,7 +86,7 @@ def test(model, device, test_loader):
 	test_acc_l1.append(100. * correct / processed)
 	return test_acc_l1[-1]
 
-def fit(model, device, train_loader, test_loader, optimizer, scheduler, start_epoch, num_epoch, plot_acc = False):
+def fit_generator(model, device, train_loader, test_loader, optimizer, scheduler, start_epoch, num_epoch, plot_acc = False):
 	train_acc = []
 	test_acc = []
 	for epoch in range(start_epoch, start_epoch+num_epoch+1):
