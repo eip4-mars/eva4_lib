@@ -103,8 +103,8 @@ def fit_generator(model, device, train_loader, test_loader, optimizer, scheduler
 			scheduler.step()
 	
 	if plot_acc:
-		plt.plot(range(1,7), train_acc, label= 'Train Accuracy')
-		plt.plot(range(1,7), test_acc, label= 'Test Accuracy')
+		plt.plot(range(start_epoch, start_epoch+num_epoch), train_acc, label= 'Train Accuracy')
+		plt.plot(range(start_epoch, start_epoch+num_epoch), test_acc, label= 'Test Accuracy')
 		plt.legend()
 		plt.xlabel("Epoch")
 		plt.ylabel("Accuracy")
