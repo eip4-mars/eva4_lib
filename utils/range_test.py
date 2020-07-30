@@ -1,4 +1,4 @@
-from train_test import train , test
+from eva4_lib.utils.train_test import train , test
 import matplotlib.pyplot as plt
 import torch.optim as optim
 from models.custom_resnet import cust_resnet
