@@ -4,6 +4,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import OneCycleLR
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 import torchvision
 import torchsummary
@@ -135,3 +136,44 @@ def get_misclassified(pred,labels):
 	return correct,	misclassified
 
 	
+def print_misclassified(model, device, test_loader, n, labels_list):
+	'''
+	n : number of misclassified Images per class
+	labels_list : List of label names
+	'''
+	model.to(device)
+	fail=[]
+	for eval_data, eval_target in test_loader:
+		eval_data, eval_target = eval_data.to(device), eval_target.to(device)
+		eval_out = model(eval_data)
+		target_lbl=eval_target.cpu().numpy()
+		pred_lbl=eval_out.argmax(1).cpu().numpy()
+		#print(pred_lbl)
+		#print(eval_target)
+		for i in range(64):
+		if target_lbl[i] != pred_lbl[i]:fail.append([eval_data[i].cpu().numpy(),target_lbl[i],pred_lbl[i]])
+		#print('fail_count : '+str(len(fail)))
+		if len(fail) > n * 20: break
+	
+	#List (Class-wise)
+	fail_n = []
+	for i in range(len(labels_list)):
+		fail_i = [x for x in fail if x[1] == i]
+		if len(fail_i) > n : fail_i = fail_i[:10]
+		fail_n.append(fail_i)
+	
+	for i in range(len(fail_n)):
+		miscl = len(fail_n[i])
+		fig = plt.figure(figsize=(40, 40 * miscl ))
+		for j in range(miscl):
+			ax=fig.add_subplot(1, miscl, j+1)
+			img=np.transpose(fail_n[i][j][0], (1, 2, 0))
+			min,max = img.min(), img.max()
+			img = (img - min)/(max-min)
+			ax.imshow(img)
+			ax.axis('off')
+			gs1 = gridspec.GridSpec(1, miscl)
+			gs1.update(wspace=0.025, hspace=0.05)
+			ax.set_title("Actual : "+labels_list[fail_n[i][j][1]]+"\n  Predicted : "+labels_list[fail_n[i][j][2]])
+		plt.savefig('Misclassified_{}.jpg'.format(i), orientation = 'landscape', bbox_inches = 'tight')
+		plt.show()
