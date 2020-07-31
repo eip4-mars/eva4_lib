@@ -150,9 +150,8 @@ def print_misclassified(model, device, test_loader, n, labels_list):
 		pred_lbl=eval_out.argmax(1).cpu().numpy()
 		#print(pred_lbl)
 		#print(eval_target)
-		for i in range(64):
-		if target_lbl[i] != pred_lbl[i]:fail.append([eval_data[i].cpu().numpy(),target_lbl[i],pred_lbl[i]])
-		#print('fail_count : '+str(len(fail)))
+		for i in range(test_loader.batch_size):
+			if target_lbl[i] != pred_lbl[i]:fail.append([eval_data[i].cpu().numpy(),target_lbl[i],pred_lbl[i]])
 		if len(fail) > n * 20: break
 	
 	#List (Class-wise)
