@@ -16,7 +16,7 @@ def calculate_valid_crop_size(crop_size, upscale_factor):
 
 def train_hr_transform(crop_size):
     return Compose([
-		ToPILImage(mode = 'RGB'),
+		#ToPILImage(mode = 'RGB'),
         RandomCrop(crop_size),
         ToTensor(),
     ])
