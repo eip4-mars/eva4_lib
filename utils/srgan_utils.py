@@ -16,6 +16,7 @@ def calculate_valid_crop_size(crop_size, upscale_factor):
 
 def train_hr_transform(crop_size):
     return Compose([
+		ToPILImage(mode = 'RGB'),
         RandomCrop(crop_size),
         ToTensor(),
     ])
@@ -23,7 +24,7 @@ def train_hr_transform(crop_size):
 
 def train_lr_transform(crop_size, upscale_factor):
     return Compose([
-        ToPILImage('RGB'),
+        ToPILImage(mode = 'RGB'),
         Resize(crop_size // upscale_factor, interpolation=Image.BICUBIC),
         ToTensor()
     ])
@@ -31,7 +32,7 @@ def train_lr_transform(crop_size, upscale_factor):
 
 def display_transform():
     return Compose([
-        ToPILImage('RGB'),
+        ToPILImage(mode='RGB'),
         Resize(400),
         CenterCrop(400),
         ToTensor()
