@@ -87,9 +87,9 @@ class TestDatasetFromFolder(Dataset):
 
     def __getitem__(self, index):
         image_name = self.lr_filenames[index].split('/')[-1]
-        lr_image = Image.open(self.lr_filenames[index])
+        lr_image = Image.open(self.lr_filenames[index]).convert('RGB')
         w, h = lr_image.size
-        hr_image = Image.open(self.hr_filenames[index])
+        hr_image = Image.open(self.hr_filenames[index]).convert('RGB')
         hr_scale = Resize((self.upscale_factor * h, self.upscale_factor * w), interpolation=Image.BICUBIC)
         hr_restore_img = hr_scale(lr_image)
         return image_name, ToTensor()(lr_image), ToTensor()(hr_restore_img), ToTensor()(hr_image)
